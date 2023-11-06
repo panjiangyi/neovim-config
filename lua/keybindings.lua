@@ -8,6 +8,12 @@ local opt = {noremap = true, silent = true }
 map("n", "<C-b>", ":NvimTreeToggle<CR>", opt)
 map("n", "<C-h>", ":BufferLineCyclePrev<CR>", opt)
 map("n", "<C-l>", ":BufferLineCycleNext<CR>", opt)
+-- Telescope
+-- 查找文件
+map("n", "<C-p>", ":Telescope find_files<CR>", opt)
+-- 全局搜索
+map("n", "<C-f>", ":Telescope live_grep<CR>", opt)
+
 -- 列表快捷键
 pluginKeys.nvimTreeList = {
   -- 打开文件或文件夹

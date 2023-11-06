@@ -17,7 +17,9 @@ packer.startup({
     use("williamboman/nvim-lsp-installer")
     -- Lspconfig
     use({ "neovim/nvim-lspconfig" })
-
+    use({"glepnir/dashboard-nvim", requires = {'nvim-tree/nvim-web-devicons'}})
+    use("ahmedkhalf/project.nvim")
+    use { 'nvim-telescope/telescope.nvim', requires = { "nvim-lua/plenary.nvim" } }
   end,
   config = {
     display = {
