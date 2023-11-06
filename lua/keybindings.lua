@@ -8,7 +8,6 @@ local opt = {noremap = true, silent = true }
 map("n", "<C-b>", ":NvimTreeToggle<CR>", opt)
 map("n", "<C-h>", ":BufferLineCyclePrev<CR>", opt)
 map("n", "<C-l>", ":BufferLineCycleNext<CR>", opt)
-map("n", "<C-w>", ":Bdelete!<CR>", opt)
 -- 列表快捷键
 pluginKeys.nvimTreeList = {
   -- 打开文件或文件夹
