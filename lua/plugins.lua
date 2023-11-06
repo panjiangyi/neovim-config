@@ -14,7 +14,8 @@ packer.startup({
     use("arkav/lualine-lsp-progress")
     use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
     --------------------- LSP --------------------
-    use("williamboman/nvim-lsp-installer")
+    use({ "williamboman/mason.nvim" })
+    use({ "williamboman/mason-lspconfig.nvim" })
     -- Lspconfig
     use({ "neovim/nvim-lspconfig" })
     use({"glepnir/dashboard-nvim", requires = {'nvim-tree/nvim-web-devicons'}})
