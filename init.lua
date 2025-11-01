@@ -1,4 +1,5 @@
 require('config.lazy')
+require('config.neotree')
 
 -- Basic settings from init.vim
 vim.opt.number = true          -- 显示绝对行号
