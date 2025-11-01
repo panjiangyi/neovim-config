@@ -46,5 +46,17 @@ return {
       map("n", "<leader>bp", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Previous buffer" })
       map("n", "<leader>bc", "<Cmd>bdelete<CR>", { desc = "Close buffer" })
     end,
+  },
+
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons",
+      "LinArcX/telescope-env.nvim",
+    },
+    config = function()
+      require("plugin-config.telescope")
+    end,
   }
 }
