@@ -7,6 +7,16 @@ return {
   --   dependencies = { "nvim-lua/plenary.nvim" }
   -- },
 
+  -- Colorscheme: Tokyo Night (supports Tree-sitter)
+  {
+    'folke/tokyonight.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      vim.cmd([[colorscheme tokyonight]])
+    end,
+  },
+
   -- Neo-tree.nvim
   {
     "nvim-neo-tree/neo-tree.nvim",
@@ -74,6 +84,24 @@ return {
     event = "VeryLazy",
     config = function()
       require("plugin-config.project")
+    end,
+  },
+
+  -- nvim-treesitter
+  {
+    "nvim-treesitter/nvim-treesitter",
+    version = false,
+    build = ":TSUpdate",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter-textobjects",
+    },
+    config = function()
+      require("nvim-treesitter.configs").setup(require("plugin-config.nvim-treesitter"))
+      
+      -- 开启 Folding 模块
+      vim.opt.foldmethod = "expr"
+      vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+      vim.opt.foldlevel = 99
     end,
   },
 }
