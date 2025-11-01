@@ -97,11 +97,77 @@ return {
     },
     config = function()
       require("nvim-treesitter.configs").setup(require("plugin-config.nvim-treesitter"))
-      
+
       -- 开启 Folding 模块
       vim.opt.foldmethod = "expr"
       vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
       vim.opt.foldlevel = 99
     end,
   },
+
+  -- LSP Configuration
+  {
+    "neovim/nvim-lspconfig",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      "mason-org/mason.nvim",
+      "hrsh7th/cmp-nvim-lsp",
+    },
+    config = function()
+      require("plugin-config.lsp")
+    end,
+  },
+
+  -- Mason for managing LSP servers
+  {
+    "mason-org/mason.nvim",
+    config = function()
+      require("mason").setup({
+        ui = {
+          icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗"
+          }
+        }
+      })
+    end,
+  },
+
+  -- Completion system
+  {
+    "hrsh7th/nvim-cmp",
+    event = "InsertEnter",
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline",
+      "L3MON4D3/LuaSnip",
+      "saadparwaiz1/cmp_luasnip",
+    },
+    config = function()
+      require("plugin-config.cmp")
+    end,
+  },
+
+  -- LuaSnip for snippets
+  {
+    "L3MON4D3/LuaSnip",
+    dependencies = {
+      "rafamadriz/friendly-snippets",
+    },
+    config = function()
+      require("plugin-config.luasnip")
+    end,
+  },
+
+  -- LSP UI improvements
+  {
+    "jose-elias-alvarez/null-ls.nvim",
+    config = function()
+      require("plugin-config.null-ls")
+    end,
+  },
+
 }
