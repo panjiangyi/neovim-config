@@ -20,6 +20,15 @@ return {
   },
 
   {
+    "nvimdev/dashboard-nvim",
+    event = "VimEnter",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require("plugin-config.dashboard")
+    end,
+  },
+
+  {
     "akinsho/bufferline.nvim",
     version = "*",
     dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -58,5 +67,13 @@ return {
     config = function()
       require("plugin-config.telescope")
     end,
-  }
+  },
+
+  {
+    "ahmedkhalf/project.nvim",
+    event = "VeryLazy",
+    config = function()
+      require("plugin-config.project")
+    end,
+  },
 }
