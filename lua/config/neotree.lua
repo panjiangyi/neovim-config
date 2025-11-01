@@ -12,19 +12,19 @@ vim.keymap.set('n', '<Esc>', function()
 end, { buffer = true })
 
 local devicons_ok, devicons = pcall(require, 'nvim-web-devicons')
-if devicons_ok then
-  devicons.set_icon({
-    ts = { icon = "📘", color = "#3178c6", cterm_color = "33", name = "TypeScript" },
-    js = { icon = "📒", color = "#f7df1e", cterm_color = "220", name = "JavaScript" },
-    py = { icon = "🐍", color = "#ffbc03", cterm_color = "214", name = "Python" },
-    json = { icon = "🧾", color = "#cbcb41", cterm_color = "185", name = "Json" },
-    md = { icon = "📝", color = "#519aba", cterm_color = "67", name = "Markdown" },
-    markdown = { icon = "📝", color = "#519aba", cterm_color = "67", name = "Markdown" },
-    yml = { icon = "📄", color = "#ffbc03", cterm_color = "214", name = "Yaml" },
-    yaml = { icon = "📄", color = "#ffbc03", cterm_color = "214", name = "Yaml" },
-    [".gitignore"] = { icon = "🚫", color = "#f14c28", cterm_color = "196", name = "GitIgnore" },
-  })
-end
+-- if devicons_ok then
+--   devicons.set_icon({
+--     ts = { icon = "📘", color = "#3178c6", cterm_color = "33", name = "TypeScript" },
+--     js = { icon = "📒", color = "#f7df1e", cterm_color = "220", name = "JavaScript" },
+--     py = { icon = "🐍", color = "#ffbc03", cterm_color = "214", name = "Python" },
+--     json = { icon = "🧾", color = "#cbcb41", cterm_color = "185", name = "Json" },
+--     md = { icon = "📝", color = "#519aba", cterm_color = "67", name = "Markdown" },
+--     markdown = { icon = "📝", color = "#519aba", cterm_color = "67", name = "Markdown" },
+--     yml = { icon = "📄", color = "#ffbc03", cterm_color = "214", name = "Yaml" },
+--     yaml = { icon = "📄", color = "#ffbc03", cterm_color = "214", name = "Yaml" },
+--     [".gitignore"] = { icon = "🚫", color = "#f14c28", cterm_color = "196", name = "GitIgnore" },
+--   })
+-- end
 
 -- Basic neo-tree setup
 require('neo-tree').setup({
@@ -39,30 +39,30 @@ require('neo-tree').setup({
   -- A list of functions, each representing a global custom command
   -- that will be available in all sources (if not overridden in `opts[source_name]`)
   commands = {}, -- get a list of commands by running `:NeotreeCommands`
-  default_component_configs = {
-    icon = {
-      folder_closed = "📁",
-      folder_open = "📂",
-      folder_empty = "🗂️",
-      default = "📄",
-    },
-    modified = {
-      symbol = "[+]",
-    },
-    git_status = {
-      symbols = {
-        added     = "[A]",
-        modified  = "[M]",
-        deleted   = "[D]",
-        renamed   = "[R]",
-        untracked = "[U]",
-        ignored   = "[I]",
-        unstaged  = "[!]",
-        staged    = "[S]",
-        conflict  = "[C]",
-      }
-    },
-  },
+  -- default_component_configs = {
+  --   icon = {
+  --     folder_closed = "📁",
+  --     folder_open = "📂",
+  --     folder_empty = "🗂️",
+  --     default = "📄",
+  --   },
+  --   modified = {
+  --     symbol = "[+]",
+  --   },
+  --   git_status = {
+  --     symbols = {
+  --       added     = "[A]",
+  --       modified  = "[M]",
+  --       deleted   = "[D]",
+  --       renamed   = "[R]",
+  --       untracked = "[U]",
+  --       ignored   = "[I]",
+  --       unstaged  = "[!]",
+  --       staged    = "[S]",
+  --       conflict  = "[C]",
+  --     }
+  --   },
+  -- },
 
   filesystem = {
     bind_to_cwd = true,
