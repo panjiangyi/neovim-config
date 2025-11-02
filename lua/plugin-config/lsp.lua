@@ -28,8 +28,25 @@ lspconfig.lua_ls.setup({
   },
 })
 
+-- ESLint 需要特殊配置（确保能读取项目配置文件）
+lspconfig.eslint.setup({
+  capabilities = capabilities,
+  -- 确保 ESLint 从项目根目录读取配置文件
+  root_dir = lspconfig.util.root_pattern('.eslintrc', '.eslintrc.js', '.eslintrc.json', '.eslintrc.yaml', '.eslintrc.yml', 'eslint.config.js', 'package.json'),
+  on_attach = function(client, bufnr)
+    -- 禁用格式化功能，使用 null-ls 处理格式化
+    client.server_capabilities.documentFormattingProvider = false
+  end,
+  settings = {
+    -- 让 ESLint 读取项目配置文件
+    format = false, -- 禁用格式化，使用 null-ls
+    -- 确保 ESLint 在项目根目录查找配置文件
+    workingDirectory = { mode = 'auto' }, -- 自动检测工作目录
+  },
+})
+
 -- 其他 LSP 服务器使用默认配置
-local servers = { "ts_ls", "eslint", "jsonls", "html", "cssls" }
+local servers = { "ts_ls", "jsonls", "html", "cssls" }
 for _, server in ipairs(servers) do
   lspconfig[server].setup({ capabilities = capabilities })
 end
