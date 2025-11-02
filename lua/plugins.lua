@@ -162,11 +162,21 @@ return {
     end,
   },
 
-  -- LSP UI improvements
+  -- Linting
   {
-    "jose-elias-alvarez/null-ls.nvim",
+    "mfussenegger/nvim-lint",
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
-      require("plugin-config.null-ls")
+      require("plugin-config.nvim-lint")
+    end,
+  },
+
+  -- Formatting
+  {
+    "stevearc/conform.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      require("plugin-config.conform")
     end,
   },
 

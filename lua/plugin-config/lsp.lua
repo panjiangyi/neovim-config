@@ -23,7 +23,7 @@ local function refresh_diagnostics(bufnr)
     -- 通知 LSP 客户端文档已更改，触发重新诊断
     local clients = vim.lsp.get_active_clients({ bufnr = bufnr })
     for _, client in ipairs(clients) do
-      if client.name == 'eslint' or client.name == 'null-ls' then
+      if client.name == 'eslint' then
         -- 发送文档变化通知，触发重新诊断
         client.notify('textDocument/didChange', {
           textDocument = vim.lsp.util.make_text_document_params(),
@@ -131,12 +131,12 @@ lspconfig.eslint.setup({
     return find_eslint_root(startpath)
   end,
   on_attach = function(client, bufnr)
-    -- 禁用格式化功能，使用 null-ls 处理格式化
+    -- 禁用格式化功能，使用 conform 处理格式化
     client.server_capabilities.documentFormattingProvider = false
   end,
   settings = {
     -- 让 ESLint 读取项目配置文件
-    format = false, -- 禁用格式化，使用 null-ls
+    format = false, -- 禁用格式化，使用 conform
     -- 确保 ESLint 在项目根目录查找配置文件
     workingDirectory = { mode = 'auto' }, -- 自动检测工作目录
   },
