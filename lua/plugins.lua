@@ -134,6 +134,21 @@ return {
     end,
   },
 
+  -- Bridge between mason.nvim and lspconfig
+  {
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = {
+      "mason-org/mason.nvim",
+      "neovim/nvim-lspconfig",
+    },
+    config = function()
+      require("mason-lspconfig").setup({
+        ensure_installed = { "lua_ls", "eslint", "ts_ls", "jsonls", "html", "cssls" },
+        automatic_installation = true,
+      })
+    end,
+  },
+
   -- Completion system
   {
     "hrsh7th/nvim-cmp",

@@ -1,5 +1,26 @@
+-- 抑制 lspconfig 的废弃警告
+local original_notify = vim.notify
+vim.notify = function(msg, level, opts)
+  if msg and msg:match("nvim%-lspconfig support for Nvim 0%.10 or older is deprecated") then
+    return
+  end
+  return original_notify(msg, level, opts)
+end
+
 local lspconfig = require('lspconfig')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
+
+-- 恢复原始 notify 函数
+vim.notify = original_notify
+
+-- 配置诊断显示
+vim.diagnostic.config({
+  virtual_text = true,
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+})
 
 -- 全局诊断刷新组
 local diagnostic_refresh_group = vim.api.nvim_create_augroup('LspDiagnosticRefresh', { clear = true })
@@ -10,13 +31,13 @@ local refresh_timers = {}
 -- 刷新诊断的通用函数
 local function refresh_diagnostics(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
-  
+
   -- 清除之前的定时器
   if refresh_timers[bufnr] then
     vim.fn.timer_stop(refresh_timers[bufnr])
     refresh_timers[bufnr] = nil
   end
-  
+
   -- 设置新的定时器，延迟 500ms 刷新
   refresh_timers[bufnr] = vim.fn.timer_start(500, function()
     refresh_timers[bufnr] = nil
@@ -26,7 +47,7 @@ local function refresh_diagnostics(bufnr)
       if client.name == 'eslint' then
         -- 发送文档变化通知，触发重新诊断
         client.notify('textDocument/didChange', {
-          textDocument = vim.lsp.util.make_text_document_params(),
+          textDocument = vim.lsp.util.make_text_document_params(bufnr),
           contentChanges = { {
             text = table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false), '\n'),
           } },
@@ -104,7 +125,7 @@ local function find_eslint_root(startpath)
     'eslint.config.js',
     'package.json',
   }
-  
+
   local current = startpath
   while current and current ~= '/' do
     for _, file in ipairs(config_files) do
@@ -132,7 +153,9 @@ lspconfig.eslint.setup({
   end,
   on_attach = function(client, bufnr)
     -- 禁用格式化功能，使用 conform 处理格式化
-    client.server_capabilities.documentFormattingProvider = false
+    if client.server_capabilities then
+      client.server_capabilities.documentFormattingProvider = false
+    end
   end,
   settings = {
     -- 让 ESLint 读取项目配置文件
@@ -145,5 +168,18 @@ lspconfig.eslint.setup({
 -- 其他 LSP 服务器使用默认配置
 local servers = { "ts_ls", "jsonls", "html", "cssls" }
 for _, server in ipairs(servers) do
-  lspconfig[server].setup({ capabilities = capabilities })
+  local ok, lsp_server = pcall(require, 'lspconfig.' .. server)
+  if ok then
+    lsp_server.setup({
+      capabilities = capabilities,
+      on_attach = function(client, bufnr)
+        -- 确保兼容性
+        if client.server_capabilities then
+          -- 可以在这里添加通用的 on_attach 逻辑
+        end
+      end,
+    })
+  else
+    vim.notify("LSP server " .. server .. " not available", vim.log.levels.WARN)
+  end
 end
