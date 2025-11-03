@@ -1,17 +1,4 @@
--- 抑制 lspconfig 的废弃警告
-local original_notify = vim.notify
-vim.notify = function(msg, level, opts)
-  if msg and msg:match("nvim%-lspconfig support for Nvim 0%.10 or older is deprecated") then
-    return
-  end
-  return original_notify(msg, level, opts)
-end
-
-local lspconfig = require('lspconfig')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
-
--- 恢复原始 notify 函数
-vim.notify = original_notify
 
 -- 配置诊断显示
 vim.diagnostic.config({
@@ -103,7 +90,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 local capabilities = cmp_nvim_lsp.default_capabilities()
 
 -- Lua 语言服务器需要特殊配置（识别 vim 全局变量）
-lspconfig.lua_ls.setup({
+vim.lsp.config('lua_ls', {
   capabilities = capabilities,
   settings = {
     Lua = {
@@ -144,7 +131,7 @@ local function find_eslint_root(startpath)
   return nil
 end
 
-lspconfig.eslint.setup({
+vim.lsp.config('eslint', {
   capabilities = capabilities,
   -- 递归向上查找配置文件，而不是只从当前目录查找
   root_dir = function(fname)
@@ -168,18 +155,20 @@ lspconfig.eslint.setup({
 -- 其他 LSP 服务器使用默认配置
 local servers = { "ts_ls", "jsonls", "html", "cssls" }
 for _, server in ipairs(servers) do
-  local ok, lsp_server = pcall(require, 'lspconfig.' .. server)
-  if ok then
-    lsp_server.setup({
-      capabilities = capabilities,
-      on_attach = function(client, bufnr)
-        -- 确保兼容性
-        if client.server_capabilities then
-          -- 可以在这里添加通用的 on_attach 逻辑
-        end
-      end,
-    })
-  else
-    vim.notify("LSP server " .. server .. " not available", vim.log.levels.WARN)
-  end
+  vim.lsp.config(server, {
+    capabilities = capabilities,
+    on_attach = function(client, bufnr)
+      -- 确保兼容性
+      if client.server_capabilities then
+        -- 可以在这里添加通用的 on_attach 逻辑
+      end
+    end,
+  })
+end
+
+-- 启用所有配置的 LSP 服务器
+vim.lsp.enable('lua_ls')
+vim.lsp.enable('eslint')
+for _, server in ipairs(servers) do
+  vim.lsp.enable(server)
 end
