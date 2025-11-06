@@ -149,6 +149,21 @@ return {
     end,
   },
 
+  -- Bridge between mason.nvim and dap
+  {
+    "jay-babu/mason-nvim-dap.nvim",
+    dependencies = {
+      "mason-org/mason.nvim",
+      "mfussenegger/nvim-dap",
+    },
+    config = function()
+      require("mason-nvim-dap").setup({
+        ensure_installed = { "js-debug-adapter" },
+        automatic_installation = true,
+      })
+    end,
+  },
+
   -- Completion system
   {
     "hrsh7th/nvim-cmp",
@@ -192,6 +207,14 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       require("plugin-config.conform")
+    end,
+  },
+
+  -- Debug Adapter Protocol
+  {
+    "mfussenegger/nvim-dap",
+    config = function()
+      require("plugin-config.dap")
     end,
   },
 
