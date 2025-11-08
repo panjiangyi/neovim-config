@@ -4,9 +4,11 @@
 
 ## 当前已启用的快捷键
 
+**注意**：Leader 键已设置为**空格键** `Space`，所以下面的快捷键都是 `Space + 字母` 的组合。
+
 ### 基本编辑
-- `\w` - 保存文件
-- `\nh` - 取消搜索高亮
+- `Space + w` - 保存文件
+- `Space + nh` - 取消搜索高亮
 
 ### 文件查找（Telescope）
 - `Ctrl+p` - 查找文件
@@ -14,30 +16,30 @@
 
 ### 文件树（Neo-tree）
 - `Ctrl+n` - 打开文件树
-- `\e` - 切换文件树
-- `\bf` - 显示缓冲区树
-- `\gs` - Git 状态
+- `Space + e` - 切换文件树
+- `Space + bf` - 显示缓冲区树
+- `Space + gs` - Git 状态
 
 ### 缓冲区切换（Buffer）
-- `\bn` - 下一个缓冲区
-- `\bp` - 上一个缓冲区
-- `\bc` - 关闭当前缓冲区
+- `Space + bn` - 下一个缓冲区
+- `Space + bp` - 上一个缓冲区
+- `Space + bc` - 关闭当前缓冲区
 
 ### LSP（代码智能）
 - `gd` - 跳转到定义
 - `K` - 显示文档
-- `Space+rn` - 重命名
+- `Space + rn` - 重命名
 - `gr` - 查找引用
 - `[d` - 上一个错误
 - `]d` - 下一个错误
-- `\ca` - 代码修复
+- `Space + ca` - 代码修复
 
 ### 调试（DAP）
-- `\db` - 切换断点
-- `\dc` - 开始/继续调试
-- `\di` - 单步进入
-- `\do` - 单步跳过
-- `\ds` - 停止调试
+- `Space + db` - 切换断点
+- `Space + dc` - 开始/继续调试
+- `Space + di` - 单步进入
+- `Space + do` - 单步跳过
+- `Space + ds` - 停止调试
 
 ## 如何启用更多快捷键
 
@@ -53,14 +55,17 @@
 :Telescope keymaps
 ```
 
-## 修改 Leader 键
+## Leader 键设置
 
-默认 leader 键是 `\`，如果想改成空格：
+当前 Leader 键已设置为**空格键** `Space`，设置在 `lua/config/lazy.lua` 中。
 
-在 `lua/keybindings.lua` 的顶部取消注释：
+如需修改，请编辑 `lua/config/lazy.lua` 文件：
 ```lua
-vim.g.mapleader = " "
+vim.g.mapleader = " "  -- 改为你想要的键
+vim.g.maplocalleader = "\\"  -- 本地 leader 键
 ```
+
+⚠️ **重要**：Leader 键必须在加载插件之前设置，所以要在 `lazy.lua` 中设置。
 
 ## 常用技巧
 
