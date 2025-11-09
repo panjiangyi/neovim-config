@@ -1,8 +1,9 @@
 -- Neo-tree configuration
-vim.keymap.set('n', '<C-n>', ':Neotree filesystem reveal left<CR>')
-vim.keymap.set('n', '<leader>e', ':Neotree filesystem reveal left<CR>')
-vim.keymap.set('n', '<leader>bf', ':Neotree buffers reveal float<CR>')
-vim.keymap.set('n', '<leader>gs', ':Neotree git_status reveal left<CR>')
+-- 注意：快捷键已移到 keybindings.lua 中统一管理
+-- <C-n>        - 打开文件树（在 keybindings.lua 中配置）
+-- <leader>e    - 切换文件树（在 keybindings.lua 中配置）
+-- <leader>bf   - 显示缓冲区树（在 keybindings.lua 中配置）
+-- <leader>gs   - 已被 gitsigns 使用（暂存 hunk），如需 Git 状态视图可使用其他快捷键
 
 -- Close neo-tree with Escape when it has focus
 vim.keymap.set('n', '<Esc>', function()

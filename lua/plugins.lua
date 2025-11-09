@@ -222,4 +222,13 @@ return {
     end,
   },
 
+  -- Git signs (显示 git 状态，类似 VSCode)
+  {
+    "lewis6991/gitsigns.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      require("plugin-config.gitsigns")
+    end,
+  },
+
 }
