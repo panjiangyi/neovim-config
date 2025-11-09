@@ -231,4 +231,14 @@ return {
     end,
   },
 
+  -- Trouble.nvim: 类似 VSCode 的问题面板
+  {
+    "folke/trouble.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      require("plugin-config.trouble")
+    end,
+  },
+
 }

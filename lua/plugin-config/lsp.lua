@@ -1,12 +1,34 @@
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
 
--- 配置诊断显示
+-- 配置诊断显示（VSCode 风格：只显示符号和下划线，不显示虚拟文本）
 vim.diagnostic.config({
-  virtual_text = true,
+  -- 禁用虚拟文本（不在代码行后显示错误信息，类似 VSCode）
+  virtual_text = false,
+  -- 启用符号列（左侧显示错误符号，类似 VSCode）
   signs = true,
+  -- 启用下划线（在错误位置显示下划线）
   underline = true,
+  -- 插入模式下不更新诊断（性能优化）
   update_in_insert = false,
+  -- 按严重程度排序
   severity_sort = true,
+  -- 浮动窗口配置（光标悬停时显示完整信息）
+  float = {
+    -- 显示完整消息
+    source = "always",
+    -- 边框样式
+    border = "rounded",
+    -- 焦点时关闭
+    focusable = false,
+    -- 格式化函数：显示完整信息
+    format = function(diagnostic)
+      local code = diagnostic.code or (diagnostic.user_data and diagnostic.user_data.lsp.code)
+      if code then
+        return string.format("%s [%s]\n%s", diagnostic.source or "LSP", code, diagnostic.message)
+      end
+      return string.format("%s\n%s", diagnostic.source or "LSP", diagnostic.message)
+    end,
+  },
 })
 
 -- 全局诊断刷新组
@@ -60,6 +82,27 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- Code Actions（包括 ESLint 自动修复）
     vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
     vim.keymap.set('v', '<leader>ca', vim.lsp.buf.code_action, opts)
+    
+    -- Trouble.nvim 快捷键（类似 VSCode 的 Problems 面板）
+    -- 打开/切换工作区诊断（所有文件的诊断）
+    vim.keymap.set('n', '<leader>xx', '<cmd>Trouble diagnostics toggle<cr>', 
+      vim.tbl_extend('force', opts, { desc = 'Toggle workspace diagnostics' }))
+    -- 打开/切换当前文件的诊断
+    vim.keymap.set('n', '<leader>xw', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', 
+      vim.tbl_extend('force', opts, { desc = 'Toggle document diagnostics' }))
+    -- 只显示错误（过滤警告和信息）
+    vim.keymap.set('n', '<leader>xd', '<cmd>Trouble diagnostics toggle filter.severity=vim.diagnostic.severity.ERROR<cr>', 
+      vim.tbl_extend('force', opts, { desc = 'Toggle workspace errors' }))
+    -- 显示当前行的诊断（浮动窗口）
+    vim.keymap.set('n', '<leader>xe', function()
+      vim.diagnostic.open_float(nil, {
+        focusable = false,
+        close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+        border = "rounded",
+        source = "always",
+        prefix = " ",
+      })
+    end, vim.tbl_extend('force', opts, { desc = 'Show line diagnostic' }))
     
     -- 手动刷新诊断的快捷键
     vim.keymap.set('n', '<leader>dr', function()

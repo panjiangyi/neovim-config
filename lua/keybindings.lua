@@ -106,6 +106,12 @@ map("n", "<C-f>", "<Cmd>Telescope live_grep<CR>", opts("Live grep"))
 -- ]d           - 下一个诊断
 -- <leader>ca   - 代码操作（修复）
 -- <leader>dr   - 刷新诊断
+--
+-- Trouble.nvim 诊断面板（类似 VSCode 的 Problems 面板）：
+-- <leader>xx   - 打开/切换工作区诊断（所有文件的诊断）
+-- <leader>xw   - 打开/切换当前文件的诊断
+-- <leader>xd   - 只显示错误（过滤警告和信息）
+-- <leader>xe   - 显示当前行的诊断（浮动窗口）
 
 -- 额外的 LSP 快捷键
 -- map("n", "gD", vim.lsp.buf.declaration, opts("Go to declaration"))
