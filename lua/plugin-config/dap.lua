@@ -48,6 +48,70 @@ dap.configurations.typescript = dap.configurations.javascript
 dap.configurations.javascriptreact = dap.configurations.javascript
 dap.configurations.typescriptreact = dap.configurations.javascript
 
+-- 配置 Python 调试适配器 (debugpy)
+dap.adapters.debugpy = {
+  type = "executable",
+  command = "python",
+  args = { "-m", "debugpy.adapter" },
+}
+
+-- Python 调试配置
+dap.configurations.python = {
+  {
+    type = "debugpy",
+    request = "launch",
+    name = "Launch file",
+    program = "${file}",
+    pythonPath = function()
+      -- 尝试使用虚拟环境中的 Python，否则使用系统 Python
+      local cwd = vim.fn.getcwd()
+      if vim.fn.executable(cwd .. "/venv/bin/python") == 1 then
+        return cwd .. "/venv/bin/python"
+      elseif vim.fn.executable(cwd .. "/.venv/bin/python") == 1 then
+        return cwd .. "/.venv/bin/python"
+      else
+        return "python"
+      end
+    end,
+  },
+  {
+    type = "debugpy",
+    request = "launch",
+    name = "Launch file with arguments",
+    program = "${file}",
+    args = function()
+      local args_string = vim.fn.input("Arguments: ")
+      return vim.split(args_string, " +")
+    end,
+    pythonPath = function()
+      local cwd = vim.fn.getcwd()
+      if vim.fn.executable(cwd .. "/venv/bin/python") == 1 then
+        return cwd .. "/venv/bin/python"
+      elseif vim.fn.executable(cwd .. "/.venv/bin/python") == 1 then
+        return cwd .. "/.venv/bin/python"
+      else
+        return "python"
+      end
+    end,
+  },
+  {
+    type = "debugpy",
+    request = "attach",
+    name = "Attach to Process",
+    processId = dapUtils.pick_process,
+    pythonPath = function()
+      local cwd = vim.fn.getcwd()
+      if vim.fn.executable(cwd .. "/venv/bin/python") == 1 then
+        return cwd .. "/venv/bin/python"
+      elseif vim.fn.executable(cwd .. "/.venv/bin/python") == 1 then
+        return cwd .. "/.venv/bin/python"
+      else
+        return "python"
+      end
+    end,
+  },
+}
+
 -- 基本键位映射
 local opts = { noremap = true, silent = true }
 
