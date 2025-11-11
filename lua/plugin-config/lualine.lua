@@ -1,4 +1,4 @@
-return {
+local opts = {
   options = {
     icons_enabled = true,
     theme = 'auto',
@@ -62,3 +62,5 @@ return {
   inactive_winbar = {},
   extensions = {'neo-tree', 'trouble', 'toggleterm'}
 }
+
+require('lualine').setup(opts)
