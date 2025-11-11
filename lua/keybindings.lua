@@ -40,10 +40,10 @@ map("n", "<leader>nh", ":noh<CR>", opts("Clear search highlight"))
 -- map("n", "<leader>sc", ":close<CR>", opts("Close window"))
 
 -- 窗口导航
--- map("n", "<C-h>", "<C-w>h", opts("Go to left window"))
--- map("n", "<C-j>", "<C-w>j", opts("Go to bottom window"))
--- map("n", "<C-k>", "<C-w>k", opts("Go to top window"))
--- map("n", "<C-l>", "<C-w>l", opts("Go to right window"))
+map("n", "<C-h>", "<C-w>h", opts("Go to left window"))
+map("n", "<C-j>", "<C-w>j", opts("Go to bottom window"))
+map("n", "<C-k>", "<C-w>k", opts("Go to top window"))
+map("n", "<C-l>", "<C-w>l", opts("Go to right window"))
 
 -- 缩进（保持选择）
 -- map("v", "<", "<gv", opts("Indent left"))
