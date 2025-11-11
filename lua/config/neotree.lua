@@ -34,6 +34,17 @@ require('neo-tree').setup({
   enable_git_status = true,
   enable_diagnostics = true,
   open_files_do_not_replace_types = { "terminal", "trouble", "qf" }, -- when opening files, do not use windows containing these filetypes or buftypes
+
+  -- 窗口配置
+  window = {
+    position = "left", -- 固定在左侧
+    width = 30, -- 固定宽度
+    auto_expand_width = false, -- 防止自动扩展宽度
+    mappings = {
+      ["<esc>"] = "cancel", -- 防止用ESC关闭
+      ["q"] = "cancel", -- 用q代替ESC关闭
+    },
+  },
   event_handlers = {
     {
       event = "neo_tree_popup_input_ready",
@@ -41,6 +52,15 @@ require('neo-tree').setup({
       handler = function(args)
         vim.cmd("stopinsert")
         vim.keymap.set("i", "<esc>", vim.cmd.stopinsert, { noremap = true, buffer = args.bufnr })
+      end,
+    },
+    {
+      event = "file_opened",
+      handler = function()
+        -- 当打开文件时，确保neo-tree仍然显示
+        if vim.bo.filetype ~= "neo-tree" then
+          vim.cmd("Neotree show")
+        end
       end,
     },
   },
@@ -75,14 +95,14 @@ require('neo-tree').setup({
   -- },
 
   filesystem = {
-    bind_to_cwd = true,
-    cwd_target = "global",
+    bind_to_cwd = false, -- 不要绑定到当前工作目录
+    cwd_target = "global", -- 使用全局工作目录
     follow_current_file = {
-      enabled = true,
+      enabled = false, -- 禁用跟随当前文件
       leave_dirs_open = false,
     },
     hijack_netrw_behavior = "open_default",
-    use_libuv_file_watcher = true,
+    use_libuv_file_watcher = false, -- 禁用文件监视器，防止目录变化
     filtered_items = {
       visible = false,
       hide_dotfiles = false,
@@ -92,7 +112,7 @@ require('neo-tree').setup({
 
   buffers = {
     follow_current_file = {
-      enabled = true,
+      enabled = false, -- 禁用缓冲区跟随当前文件
       leave_dirs_open = false,
     },
   },
@@ -222,3 +242,18 @@ require('neo-tree').setup({
   --   },
   -- },
 })
+
+-- 移除原有的ESC关闭功能，防止意外关闭
+-- vim.keymap.set('n', '<Esc>', function()
+--   if vim.bo.filetype == 'neo-tree' then
+--     vim.cmd('Neotree close')
+--   end
+-- end, { buffer = true })
+
+-- 启动时自动打开文件树到当前目录
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.cmd("Neotree show")
+  end,
+})
+

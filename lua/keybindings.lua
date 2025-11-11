@@ -137,10 +137,13 @@ map("n", "<C-f>", "<Cmd>Telescope live_grep<CR>", opts("Live grep"))
 
 -- Neo-tree 快捷键
 map("n", "<C-n>", ":Neotree filesystem reveal left<CR>", opts("Open file tree"))
-map("n", "<leader>e", ":Neotree filesystem reveal left<CR>", opts("Toggle file tree"))
+map("n", "<leader>e", ":Neotree filesystem toggle<CR>", opts("Toggle file tree"))
 map("n", "<leader>bf", ":Neotree buffers reveal float<CR>", opts("Show buffer tree"))
 -- 注意：<leader>gs 被 gitsigns 使用（暂存 hunk），如果需要打开 Git 状态视图，可以使用其他快捷键
 -- map("n", "<leader>gS", ":Neotree git_status reveal left<CR>", opts("Git status"))  -- 可选：使用 gS 代替
+
+-- 临时关闭文件树的快捷键（仅用于特殊需求）
+map("n", "<leader>ec", ":Neotree close<CR>", opts("Close file tree"))
 
 -- Neo-tree 窗口内快捷键：
 -- <CR>         - 打开文件/目录
@@ -154,7 +157,7 @@ map("n", "<leader>bf", ":Neotree buffers reveal float<CR>", opts("Show buffer tr
 -- p            - 粘贴
 -- m            - 移动到指定路径
 -- H            - 切换显示隐藏文件
--- <Esc>        - 关闭 Neo-tree
+-- q            - 关闭 Neo-tree (用 q 代替 ESC)
 
 -- ============================================================================
 -- 终端模式
