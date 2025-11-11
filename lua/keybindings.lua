@@ -93,6 +93,10 @@ map("n", "<C-f>", "<Cmd>Telescope live_grep<CR>", opts("Live grep"))
 -- map("n", "<S-l>", ":bnext<CR>", opts("Next buffer"))
 -- map("n", "<S-h>", ":bprevious<CR>", opts("Previous buffer"))
 
+-- 快速切换 Buffer 标签（顶部栏）
+map("n", "<A-.>", "<Cmd>BufferLineCycleNext<CR>", opts("Next buffer tab"))
+map("n", "<A-,>", "<Cmd>BufferLineCyclePrev<CR>", opts("Previous buffer tab"))
+
 -- ============================================================================
 -- LSP 快捷键（在 plugin-config/lsp.lua 中自动设置）
 -- ============================================================================
