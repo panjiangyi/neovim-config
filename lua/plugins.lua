@@ -241,4 +241,13 @@ return {
     end,
   },
 
+  -- Status line (底部信息栏)
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require("plugin-config.lualine")
+    end,
+  },
+
 }
