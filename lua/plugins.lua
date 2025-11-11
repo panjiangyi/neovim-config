@@ -250,4 +250,13 @@ return {
     end,
   },
 
+  -- Toggleable terminal like VSCode integrated terminal
+  {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    config = function()
+      require("plugin-config.toggleterm")()
+    end,
+  },
+
 }
