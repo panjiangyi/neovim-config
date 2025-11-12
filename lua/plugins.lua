@@ -168,6 +168,15 @@ return {
     end,
   },
 
+  -- Auto pairs for brackets and quotes
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function()
+      require("plugin-config.autopairs")
+    end,
+  },
+
   -- Completion system
   {
     "hrsh7th/nvim-cmp",
