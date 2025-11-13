@@ -46,6 +46,10 @@ return {
         
         -- 注释
         ["a/"] = "@comment.outer", -- 选择整个注释块
+
+        -- 异常处理（try-catch/try-except）
+        ["ae"] = "@exception.outer", -- 选择整个异常处理块
+        ["ie"] = "@exception.inner", -- 选择异常处理内部（不包括异常类型声明）
       },
     },
     move = {
