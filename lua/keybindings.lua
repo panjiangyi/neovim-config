@@ -75,25 +75,93 @@ local pluginKeys = {}
 -- ============================================================================
 
 -- 保存和退出
--- map("n", "<C-s>", ":w<CR>", opts("Save file"))
--- map("i", "<C-s>", "<Esc>:w<CR>a", opts("Save file in insert mode"))
-map("n", "<leader>w", ":w<CR>", opts("Save"))
+-- Ctrl+s: 保存所有文件（类似 VSCode 的 Save All）
+map("n", "<C-s>", "<Cmd>wall<CR>", opts("Save all files"))
+map("i", "<C-s>", "<Esc><Cmd>wall<CR>a", opts("Save all files in insert mode"))
+map("v", "<C-s>", "<Esc><Cmd>wall<CR>", opts("Save all files in visual mode"))
+
+map("n", "<leader>w", ":w<CR>", opts("Save current file"))
 -- map("n", "<leader>q", ":q<CR>", opts("Quit"))
 -- map("n", "<leader>x", ":x<CR>", opts("Save and quit"))
+
+-- Ctrl+w: 关闭当前 buffer（类似 VSCode）
+-- 注意：这会覆盖 Vim 默认的窗口操作前缀，窗口操作改用 <leader>w 开头
+map("n", "<C-w>", function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
+  
+  -- 不关闭特殊 buffer（neo-tree、trouble 等）
+  if buftype ~= "" then
+    return
+  end
+  
+  -- 检查 buffer 是否为空（无文件名或新建的空 buffer）
+  local function is_empty_buffer(buf)
+    local name = vim.api.nvim_buf_get_name(buf)
+    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+    -- 空 buffer: 没有文件名 且 只有一行空内容
+    return name == "" and #lines == 1 and lines[1] == ""
+  end
+  
+  -- 获取所有普通 buffer
+  local buffers = vim.tbl_filter(function(buf)
+    return vim.api.nvim_buf_is_valid(buf) 
+      and vim.api.nvim_buf_get_option(buf, "buflisted")
+      and vim.api.nvim_buf_get_option(buf, "buftype") == ""
+  end, vim.api.nvim_list_bufs())
+  
+  -- 如果只有一个 buffer，切换到空 buffer 而不是关闭
+  if #buffers <= 1 then
+    vim.cmd("enew")
+  else
+    -- 有多个 buffer，智能切换
+    -- 先尝试切换到左边
+    vim.cmd("BufferLineCyclePrev")
+    local left_buf = vim.api.nvim_get_current_buf()
+    
+    -- 如果左边是空 buffer，尝试切换到右边
+    if is_empty_buffer(left_buf) then
+      -- 先回到原来的 buffer
+      vim.cmd("BufferLineCycleNext")
+      -- 再切换到右边
+      vim.cmd("BufferLineCycleNext")
+      local right_buf = vim.api.nvim_get_current_buf()
+      
+      -- 如果右边也是空 buffer，还是切回左边
+      if is_empty_buffer(right_buf) then
+        vim.cmd("BufferLineCyclePrev")
+        vim.cmd("BufferLineCyclePrev")
+      end
+    end
+  end
+  
+  -- 关闭之前的 buffer（如果它不是当前显示的）
+  if vim.api.nvim_buf_is_valid(bufnr) and bufnr ~= vim.api.nvim_get_current_buf() then
+    vim.api.nvim_buf_delete(bufnr, { force = false })
+  end
+end, opts("Close current buffer"))
 
 -- 取消搜索高亮
 map("n", "<leader>nh", ":noh<CR>", opts("Clear search highlight"))
 
--- 窗口分屏
--- map("n", "<leader>sv", ":vsplit<CR>", opts("Split vertically"))
--- map("n", "<leader>sh", ":split<CR>", opts("Split horizontally"))
--- map("n", "<leader>sc", ":close<CR>", opts("Close window"))
+-- 窗口分屏（由于 Ctrl+w 被重新映射为关闭 buffer，窗口操作改用 leader+w 开头）
+map("n", "<leader>wv", ":vsplit<CR>", opts("Split vertically"))
+map("n", "<leader>wh", ":split<CR>", opts("Split horizontally"))
+map("n", "<leader>wc", ":close<CR>", opts("Close window"))
+map("n", "<leader>wo", ":only<CR>", opts("Close other windows"))
 
--- 窗口导航
+-- 窗口导航（保持原有的 Ctrl+hjkl）
 map("n", "<C-h>", "<C-w>h", opts("Go to left window"))
 map("n", "<C-j>", "<C-w>j", opts("Go to bottom window"))
 map("n", "<C-k>", "<C-w>k", opts("Go to top window"))
 map("n", "<C-l>", "<C-w>l", opts("Go to right window"))
+
+-- 窗口大小调整
+map("n", "<leader>w=", "<C-w>=", opts("Equal window size"))
+map("n", "<leader>w>", ":vertical resize +5<CR>", opts("Increase window width"))
+map("n", "<leader>w<", ":vertical resize -5<CR>", opts("Decrease window width"))
+map("n", "<leader>w+", ":resize +5<CR>", opts("Increase window height"))
+map("n", "<leader>w-", ":resize -5<CR>", opts("Decrease window height"))
 
 -- 缩进（保持选择）
 -- map("v", "<", "<gv", opts("Indent left"))
