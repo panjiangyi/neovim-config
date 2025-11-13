@@ -188,8 +188,20 @@ map("n", "<leader>w-", ":resize -5<CR>", opts("Decrease window height"))
 -- Telescope 模糊查找（已启用）
 -- ============================================================================
 
-map("n", "<C-p>", "<Cmd>Telescope find_files<CR>", opts("Find files"))
-map("n", "<C-f>", "<Cmd>Telescope live_grep<CR>", opts("Live grep"))
+-- Ctrl+p: 查找文件（永远使用启动时的工作目录）
+map("n", "<C-p>", function()
+  require("telescope.builtin").find_files({
+    cwd = vim.g.initial_cwd,  -- 强制使用启动时的工作目录
+    find_command = { "rg", "--files", "--hidden", "--glob", "!.git/*" },
+  })
+end, opts("Find files"))
+
+-- Ctrl+f: 全局搜索（永远使用启动时的工作目录）
+map("n", "<C-f>", function()
+  require("telescope.builtin").live_grep({
+    cwd = vim.g.initial_cwd,  -- 强制使用启动时的工作目录
+  })
+end, opts("Live grep"))
 
 -- 其他 Telescope 功能
 -- map("n", "<leader>fb", "<Cmd>Telescope buffers<CR>", opts("Find buffers"))
@@ -289,8 +301,20 @@ map("n", "<C-T>", function()
   vim.notify("没有可恢复的文件", vim.log.levels.WARN)
 end, opts("Reopen last closed file (Shift+Ctrl+t)"))
 
-map("n", "<C-e>", "<Cmd>Telescope oldfiles<CR>", opts("Browse recent files (Ctrl+e)"))
-map("n", "<leader>br", "<Cmd>Telescope oldfiles<CR>", opts("Browse recent files (leader+br)"))
+-- Ctrl+e: 最近文件列表（永远使用启动时的工作目录）
+map("n", "<C-e>", function()
+  require("telescope.builtin").oldfiles({
+    cwd = vim.g.initial_cwd,  -- 强制使用启动时的工作目录
+    only_cwd = true,  -- 只显示该目录下的文件
+  })
+end, opts("Browse recent files (Ctrl+e)"))
+
+map("n", "<leader>br", function()
+  require("telescope.builtin").oldfiles({
+    cwd = vim.g.initial_cwd,  -- 强制使用启动时的工作目录
+    only_cwd = true,  -- 只显示该目录下的文件
+  })
+end, opts("Browse recent files (leader+br)"))
 
 -- ============================================================================
 -- LSP 快捷键（在 plugin-config/lsp.lua 中自动设置）

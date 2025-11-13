@@ -1,3 +1,6 @@
+-- 保存启动时的工作目录（防止 Telescope 搜索范围改变）
+vim.g.initial_cwd = vim.fn.getcwd()
+
 require('config.lazy')
 require('config.neotree')
 require('keybindings')
