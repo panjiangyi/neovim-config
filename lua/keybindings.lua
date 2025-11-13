@@ -14,6 +14,56 @@ local function opts(desc)
   return { noremap = true, silent = true, desc = desc }
 end
 
+-- Buffer 历史记录（用于恢复最近关闭的 buffer）
+local buffer_history = {}
+local max_history = 20 -- 最多保存 20 个历史记录
+
+-- 记录关闭的 buffer
+local function record_closed_buffer(bufnr)
+  local name = vim.api.nvim_buf_get_name(bufnr)
+  local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
+  local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+  
+  -- 只记录普通文件 buffer，排除插件窗口
+  if buftype == "" and name ~= "" and 
+     filetype ~= "neo-tree" and
+     filetype ~= "Trouble" and
+     filetype ~= "dashboard" and
+     not name:match("neo%-tree") and
+     not name:match("Trouble") then
+    -- 检查是否已存在（避免重复）
+    for i, entry in ipairs(buffer_history) do
+      if entry.path == name then
+        table.remove(buffer_history, i)
+        break
+      end
+    end
+    -- 添加到历史记录开头
+    table.insert(buffer_history, 1, {
+      path = name,
+      bufnr = bufnr,
+      filetype = filetype,
+    })
+    -- 限制历史记录数量
+    if #buffer_history > max_history then
+      table.remove(buffer_history)
+    end
+  end
+end
+
+-- 监听 buffer 关闭事件（使用多个事件确保捕获）
+vim.api.nvim_create_autocmd("BufDelete", {
+  callback = function(args)
+    record_closed_buffer(args.buf)
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufWipeout", {
+  callback = function(args)
+    record_closed_buffer(args.buf)
+  end,
+})
+
 -- 插件快捷键表（用于导出给其他插件使用）
 local pluginKeys = {}
 
@@ -88,6 +138,10 @@ map("n", "<C-f>", "<Cmd>Telescope live_grep<CR>", opts("Live grep"))
 -- <leader>bn  - 下一个缓冲区
 -- <leader>bp  - 上一个缓冲区
 -- <leader>bc  - 关闭当前缓冲区
+-- <S-A-t>     - 关闭除了当前 buffer 之外的所有 buffer（只关闭代码文件，不包括插件窗口）
+-- Shift+Ctrl+t - 直接打开最近关闭的文件（类似 VSCode，不显示列表）
+-- <C-e>       - 打开最近文件列表选择（显示列表）
+-- <leader>br  - 打开最近文件列表选择（显示列表，备选）
 
 -- 额外的 Buffer 快捷键
 -- map("n", "<S-l>", ":bnext<CR>", opts("Next buffer"))
@@ -96,6 +150,79 @@ map("n", "<C-f>", "<Cmd>Telescope live_grep<CR>", opts("Live grep"))
 -- 快速切换 Buffer 标签（顶部栏）
 map("n", "<A-.>", "<Cmd>BufferLineCycleNext<CR>", opts("Next buffer tab"))
 map("n", "<A-,>", "<Cmd>BufferLineCyclePrev<CR>", opts("Previous buffer tab"))
+
+-- 关闭除了当前 buffer 之外的所有 buffer（只关闭代码文件，不包括插件窗口）
+-- 快捷键：Shift + Alt + t
+map("n", "<S-A-t>", function()
+  local current_buf = vim.api.nvim_get_current_buf()
+  local buffers = vim.api.nvim_list_bufs()
+  
+  -- 先记录要关闭的 buffer（在关闭前记录）
+  local buffers_to_close = {}
+  for _, buf in ipairs(buffers) do
+    if buf ~= current_buf then
+      local buftype = vim.api.nvim_buf_get_option(buf, "buftype")
+      local filetype = vim.api.nvim_buf_get_option(buf, "filetype")
+      local name = vim.api.nvim_buf_get_name(buf)
+      
+      -- 只关闭普通文件 buffer，排除插件窗口
+      -- buftype 为空或 "" 表示普通文件
+      -- 排除 neo-tree、trouble、dashboard 等插件的 buffer
+      if buftype == "" and 
+         filetype ~= "neo-tree" and
+         filetype ~= "Trouble" and
+         filetype ~= "dashboard" and
+         not name:match("neo%-tree") and
+         not name:match("Trouble") then
+        -- 在关闭前记录
+        record_closed_buffer(buf)
+        table.insert(buffers_to_close, buf)
+      end
+    end
+  end
+  
+  -- 关闭所有需要关闭的 buffer
+  for _, buf in ipairs(buffers_to_close) do
+    vim.api.nvim_buf_delete(buf, { force = false })
+  end
+end, opts("Close other buffers (keep current)"))
+
+-- 恢复最近关闭的 buffer
+-- Shift+Ctrl+t：直接打开最近关闭的文件（类似 VSCode）
+-- Ctrl+e：打开文件列表选择
+-- leader+br：打开文件列表选择（备选）
+map("n", "<C-T>", function()
+  -- 直接打开最近关闭的第一个文件
+  local oldfiles = vim.v.oldfiles
+  if not oldfiles or #oldfiles == 0 then
+    vim.notify("没有最近打开的文件", vim.log.levels.WARN)
+    return
+  end
+  
+  -- 查找第一个存在且未打开的文件
+  for _, file in ipairs(oldfiles) do
+    if vim.fn.filereadable(file) == 1 then
+      -- 检查是否已经在某个 buffer 中打开
+      local is_open = false
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_get_name(buf) == file then
+          is_open = true
+          break
+        end
+      end
+      -- 找到第一个未打开的文件，直接打开
+      if not is_open then
+        vim.cmd("edit " .. vim.fn.fnameescape(file))
+        return
+      end
+    end
+  end
+  
+  vim.notify("没有可恢复的文件", vim.log.levels.WARN)
+end, opts("Reopen last closed file (Shift+Ctrl+t)"))
+
+map("n", "<C-e>", "<Cmd>Telescope oldfiles<CR>", opts("Browse recent files (Ctrl+e)"))
+map("n", "<leader>br", "<Cmd>Telescope oldfiles<CR>", opts("Browse recent files (leader+br)"))
 
 -- ============================================================================
 -- LSP 快捷键（在 plugin-config/lsp.lua 中自动设置）
