@@ -7,17 +7,21 @@ return {
   --   dependencies = { "nvim-lua/plenary.nvim" }
   -- },
 
-  -- Colorscheme: Tokyo Night (supports Tree-sitter)
+  -- Colorscheme: Catppuccin (supports Tree-sitter and auto light/dark switching)
 {
   'catppuccin/nvim',
   name = 'catppuccin',
   lazy = false,
   priority = 1000,
   config = function()
-    require('catppuccin').setup({
-      flavour = 'mocha', -- latte, frappe, macchiato, mocha
+    -- 使用主题切换器进行配置
+    require('plugin-config.theme-switcher').setup({
+      -- 可以在这里自定义配置
+      day_start_hour = 6,   -- 早上6点切换到 light mode
+      day_end_hour = 18,    -- 晚上6点切换到 dark mode
+      auto_switch = true,   -- 启用自动切换
+      check_interval = 60,  -- 每60秒检查一次
     })
-    vim.cmd([[colorscheme catppuccin]])
   end,
 },
 
