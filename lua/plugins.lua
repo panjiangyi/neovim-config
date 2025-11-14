@@ -272,4 +272,13 @@ return {
     end,
   },
 
+  -- Auto session management per project
+  {
+    "rmagatti/auto-session",
+    lazy = false,
+    config = function()
+      require("plugin-config.auto-session")
+    end,
+  },
+
 }

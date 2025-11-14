@@ -57,7 +57,7 @@ require('neo-tree').setup({
     {
       event = "file_opened",
       handler = function()
-        -- 当打开文件时，确保neo-tree仍然显示
+        -- 当打开文件时，确保 neo-tree 仍然显示
         if vim.bo.filetype ~= "neo-tree" then
           vim.cmd("Neotree show")
         end
@@ -250,7 +250,7 @@ require('neo-tree').setup({
 --   end
 -- end, { buffer = true })
 
--- 启动时自动打开文件树到当前目录
+-- 启动时自动打开文件树
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     vim.cmd("Neotree show")
