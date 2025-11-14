@@ -2,6 +2,9 @@ local dap = require("dap")
 local dapUtils = require("dap.utils")
 local map = vim.keymap.set
 
+-- 加载 dap-ui（如果已安装）
+local dapui_ok, dapui = pcall(require, "dapui")
+
 -- 配置 Node.js 调试适配器
 -- 直接使用 js-debug-adapter 命令（Mason 会自动将其添加到 PATH）
 dap.adapters["pwa-node"] = {
@@ -253,4 +256,22 @@ vim.fn.sign_define("DapLogPoint", {
   text = "󰯑 ",
   texthl = "DiagnosticSignInfo",
 })
+
+-- 集成 dap-ui：自动打开/关闭调试界面
+if dapui_ok then
+  -- 调试开始时自动打开 UI
+  dap.listeners.after.event_initialized["dapui_config"] = function()
+    dapui.open()
+  end
+  -- 调试结束时自动关闭 UI
+  dap.listeners.before.event_terminated["dapui_config"] = function()
+    dapui.close()
+  end
+  dap.listeners.before.event_exited["dapui_config"] = function()
+    dapui.close()
+  end
+
+  -- 切换 dap-ui 界面（注意：<leader>du 已被 step_out 占用，使用 <leader>dU）
+  map("n", "<leader>dU", dapui.toggle, vim.tbl_extend("force", opts, { desc = "Toggle DAP UI" }))
+end
 

@@ -235,6 +235,18 @@ return {
     end,
   },
 
+  -- DAP UI: 调试界面，包括断点列表、变量、调用栈等
+  {
+    "rcarriga/nvim-dap-ui",
+    dependencies = {
+      "mfussenegger/nvim-dap",
+      "nvim-neotest/nvim-nio",
+    },
+    config = function()
+      require("plugin-config.dap-ui")
+    end,
+  },
+
   -- Git signs (显示 git 状态，类似 VSCode)
   {
     "lewis6991/gitsigns.nvim",
